@@ -1,0 +1,26 @@
+/* QuickCart dashboard — orange & navy skin */
+body{background:linear-gradient(180deg,#f6f8fd,#eef2fb)!important}
+.sb{transition:transform .3s var(--qc-ease),background .2s,color .2s!important;border-radius:12px!important;min-height:38px!important;font-weight:600!important}
+.sb:hover{background:#fff1ea!important;color:#0a1f44!important;transform:translateX(4px)}
+.sb.on{background:linear-gradient(135deg,#0a1f44,#14306b)!important;color:#fff!important;font-weight:700!important;box-shadow:0 8px 18px rgba(10,31,68,.28)!important;position:relative}
+.sb.on::before{content:'';position:absolute;left:-10px;top:8px;bottom:8px;width:4px;border-radius:4px;background:#ff5a1f;box-shadow:0 0 10px rgba(255,90,31,.8)}
+.sb.on .qci{color:#ff8a3d}
+.btn-orange,.btn-blue{background:linear-gradient(135deg,#ff5a1f,#ff8a3d)!important;color:#fff!important;border:0!important;font-weight:700!important;border-radius:12px!important;box-shadow:0 8px 20px rgba(255,90,31,.35);transition:transform .3s var(--qc-ease),box-shadow .25s!important}
+.btn-orange:hover,.btn-blue:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(255,90,31,.5)}
+.btn-grey{border-radius:12px!important;font-weight:600!important;transition:transform .3s var(--qc-ease),border-color .2s!important}.btn-grey:hover{border-color:#ff5a1f!important;transform:translateY(-2px)}
+.box,.panel,.stat,.qh-card,.qh-stat{border-radius:20px!important;border:1.5px solid #e3e9f5!important;box-shadow:0 4px 16px rgba(10,31,68,.05)!important;transition:transform .35s var(--qc-ease),box-shadow .25s,border-color .2s!important}
+.stat:hover,.qh-stat:hover,.qh-card:hover{transform:translateY(-4px);border-color:rgba(255,90,31,.5)!important;box-shadow:0 18px 38px rgba(10,31,68,.12)!important}
+.stat-v,.qh-stat-v{font-family:var(--display)!important;font-weight:800;letter-spacing:-.045em}
+.qh-hero{background:radial-gradient(600px 300px at 0% 0%,rgba(255,90,31,.45),transparent 60%),radial-gradient(600px 400px at 100% 100%,rgba(42,88,200,.55),transparent 60%),linear-gradient(135deg,#061433,#0a1f44 60%,#14306b)!important;border-radius:26px!important;overflow:hidden;position:relative;box-shadow:0 24px 54px rgba(10,31,68,.3)}
+.qh-hero::after{content:'';position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,138,61,.5),transparent 70%);animation:qhGlow 6s ease-in-out infinite}
+@keyframes qhGlow{50%{transform:translate(-30px,30px) scale(1.2)}}
+.qh-hi{font-family:var(--display)!important;font-weight:800;letter-spacing:-.045em}
+.qh-link-box{background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.18)!important;border-radius:20px!important;backdrop-filter:blur(12px)}
+.qh-link-a,.qh-quick>*{border-radius:12px!important;transition:transform .3s var(--qc-ease),background .2s!important}
+.qh-link-a:hover,.qh-quick>*:hover{transform:translateY(-3px);background:rgba(255,90,31,.3)!important}
+.qh-stat-i{background:linear-gradient(135deg,#fff1ea,#ffe1d3)!important;color:#ff5a1f!important;border-radius:14px!important;transition:transform .4s var(--qc-ease)}
+.qh-stat:hover .qh-stat-i{transform:rotate(-10deg) scale(1.12)}
+.qh-setup .qh-chip{border-radius:14px!important}
+.bdg{border-radius:99px!important;font-weight:700}
+.ff input:focus,.ff select:focus,.ff textarea:focus,.sinput:focus{border-color:#ff5a1f!important;box-shadow:0 0 0 4px rgba(255,90,31,.15)!important}
+table th{color:#0a1f44!important;font-weight:700}tbody tr{transition:background .2s}tbody tr:hover{background:#fff6f1}

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickCart — Nigeria's Smart Commerce Platform</title>
+<meta name="description" content="Launch your online store, run your point of sale, manage inventory — one platform built for Nigerian entrepreneurs.">
+<meta property="og:title" content="QuickCart — Smart Commerce Platform">
+<meta property="og:description" content="Launch your online store in minutes. POS, Inventory, Accounting — all in one.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/qc-brand.css"><script src="assets/qc-fx.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;background:#0a1f44;}
+#app{width:100%;height:100vh;height:100dvh;max-width:100vw;border:none;display:block;background:#0a1f44;animation:frameIn .55s cubic-bezier(.16,1,.3,1) both;}
+@keyframes frameIn{from{opacity:0;transform:translateY(10px) scale(.995)}to{opacity:1;transform:none}}
+/* ─── PAGE LOADER ─── */
+#loader{
+  position:fixed;inset:0;
+  background:radial-gradient(900px 500px at 15% 0%,rgba(255,90,31,.28),transparent 60%),radial-gradient(800px 500px at 100% 100%,rgba(42,88,200,.45),transparent 60%),#0a1f44;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:9999;transition:opacity .5s,transform .5s;
+}
+#loader.fade{opacity:0;pointer-events:none;}
+.ld-logo{
+  font-family:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  font-size:clamp(30px,5vw,46px);font-weight:800;
+  letter-spacing:-.03em;color:#fff;margin-bottom:24px;
+  animation:ldFade .6s ease;
+}
+.ld-logo span{color:#ff5a1f;display:inline-block;animation:ldBounce 1.2s ease-in-out infinite;}
+@keyframes ldBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.ld-bar{width:240px;height:4px;background:rgba(255,255,255,.14);overflow:hidden;border-radius:2px;}
+.ld-fill{height:100%;background:linear-gradient(90deg,#ff5a1f,#ffb36b);box-shadow:0 0 14px rgba(255,90,31,.7);border-radius:2px;width:0;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.ld-txt{font-family:system-ui,sans-serif;font-size:11px;color:#8fa3cf;margin-top:14px;letter-spacing:.1em;text-transform:uppercase;animation:ldFade .6s .2s ease backwards;}
+@keyframes ldFade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+/* ─── ERROR STATE ─── */
+#err-state{display:none;position:fixed;inset:0;background:#0a0a0a;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:#fff;text-align:center;padding:24px;z-index:9998;}
+#err-state.show{display:flex;}
+#err-state h2{font-size:20px;font-weight:700;}
+#err-state p{font-size:13px;color:#666;max-width:360px;line-height:1.7;}
+#err-state button{background:#ff4d00;color:#fff;border:none;padding:12px 28px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;}
+</style>
+</head>
+<body>
+
+<!-- SPLASH LOADER -->
+<div id="loader">
+  <div class="ld-logo">Quick<span>Cart</span></div>
+  <div class="ld-bar"><div class="ld-fill" id="ld-fill"></div></div>
+  <div class="ld-txt" id="ld-txt">Loading platform…</div>
+</div>
+
+<!-- ERROR STATE -->
+<div id="err-state">
+  <div style="font-size:40px">⚠️</div>
+  <h2>Something went wrong</h2>
+  <p id="err-msg">Unable to load the page. Please check your connection.</p>
+  <button onclick="location.reload()">Try Again</button>
+</div>
+
+<!-- MAIN APP FRAME -->
+<iframe id="app" src="about:blank" allowfullscreen allow="camera;microphone;payment"></iframe>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// QUICKCART SPA ROUTER
+// Maps clean URL paths → actual HTML files
+// Users see: quickcart.ng/dashboard
+// Browser loads: admin.html internally
+// ═══════════════════════════════════════════════════════════════════
+
+// Captured BEFORE any history rewrite so the owner is never lost
+var INITIAL_STORE = (function(){ try{ return (new URLSearchParams(window.location.search).get('store')||'').trim(); }catch(e){ return ''; } })();
+var INITIAL_PAY = (function(){ try{ var v=(new URLSearchParams(window.location.search).get('qc_pay')||'').trim(); return /^[A-Za-z0-9_-]{6,80}$/.test(v)?v:''; }catch(e){ return ''; } })();
+var INITIAL_RESET = (function(){ try{ var p=new URLSearchParams(window.location.search); var t=(p.get('token')||p.get('reset_token')||'').trim(), e=(p.get('email')||p.get('reset_email')||'').trim(); return (/^[a-f0-9]{64}$/.test(t)&&e)?('token='+encodeURIComponent(t)+'&email='+encodeURIComponent(e)+'&'):''; }catch(e){ return ''; } })();
+function activeStore(){ return CUSTOM_STORE || INITIAL_STORE || ''; }
+function urlFor(path){ var st=activeStore(); return (path==='/store' && st && !CUSTOM_STORE) ? path+'?store='+encodeURIComponent(st) : path; }
+
+var ROUTES = {
+  '/'             : 'landing.html',
+  '/login'        : 'landing.html',
+  '/register'     : 'landing.html',
+  '/signup'       : 'landing.html',
+  '/trial'        : 'landing.html',
+  '/pricing'      : 'landing.html',
+  '/features'     : 'landing.html',
+  '/dashboard'    : 'admin.html',
+  '/admin'        : 'admin.html',
+  '/store-editor' : 'admin.html',
+  '/store'        : 'store.html',
+  '/storefront'   : 'store.html',
+  '/pos'          : 'pos.html',
+  '/payment'      : 'payment.html',
+  '/reset-password': 'reset-password.html',
+  '/forgot-password': 'landing.html',
+  '/point-of-sale': 'pos.html',
+  '/page-editor'  : 'page-editor.html',
+  '/editor'       : 'page-editor.html',
+  '/store-builder': 'store-builder.html',
+  '/builder'      : 'store-builder.html',
+};
+
+// Protected routes (require login)
+var PROTECTED = ['/dashboard','/admin','/store-editor','/pos','/point-of-sale','/page-editor','/editor','/store-builder','/builder'];
+
+// ─── CUSTOM DOMAIN SUPPORT ────────────────────────────────────────
+// If this site is opened on a store owner's own domain (not the platform),
+// look the domain up in the central DB and show that owner's store.
+var MAIN_DB = 'https://sneakerai-c96f0-default-rtdb.firebaseio.com';
+var CUSTOM_STORE = '';   // owner username when on a custom domain
+function isPlatformHost(h){
+  h = String(h||'').toLowerCase();
+  if(!h || h==='localhost' || h==='127.0.0.1' || /\.vercel\.app$/.test(h)) return true;
+  if(/(^|\.)quickcart\.ng$/.test(h)) return true;           // existing platform domain
+  // quickcart.com: bare domain and www are the platform; name.quickcart.com is looked up as an owner's store
+  return /^(www\.)?quickcart\.com$/.test(h);
+}
+function domKey(d){ return String(d).toLowerCase().replace(/\./g, ','); }
+function lookupCustomDomain(){
+  var h = location.hostname.toLowerCase();
+  if(isPlatformHost(h)) return Promise.resolve('');
+  var hosts = [h]; if(h.indexOf('www.')===0) hosts.push(h.slice(4)); else hosts.push('www.'+h);
+  return hosts.reduce(function(p, host){
+    return p.then(function(found){
+      if(found) return found;
+      return fetch(MAIN_DB + '/domains/' + domKey(host) + '.json')
+        .then(function(r){ return r.json(); })
+        .then(function(v){ return (v && v.owner) ? String(v.owner) : ''; })
+        .catch(function(){ return ''; });
+    });
+  }, Promise.resolve(''));
+}
+var MARKETING = ['/','/login','/register','/signup','/trial','/pricing','/features'];
+
+var frame = document.getElementById('app');
+var loader = document.getElementById('loader');
+var fill   = document.getElementById('ld-fill');
+var ldTxt  = document.getElementById('ld-txt');
+
+// ─── PROGRESS ANIMATION ───────────────────────────────────────────
+function animateLoader(targetPct, text){
+  fill.style.width = targetPct + '%';
+  if(text) ldTxt.textContent = text;
+}
+function hideLoader(){
+  try{ QCFlow.done(); }catch(e){}
+  animateLoader(100);
+  setTimeout(function(){
+    loader.classList.add('fade');
+    setTimeout(function(){ loader.style.display='none'; }, 500);
+  }, 300);
+}
+function showLoader(text){
+  try{ QCFlow.start(); }catch(e){}
+  loader.style.display = 'flex';
+  loader.classList.remove('fade');
+  fill.style.width = '0%';
+  fill.style.transition = 'none';
+  requestAnimationFrame(function(){
+    fill.style.transition = 'width .8s cubic-bezier(.4,0,.2,1)';
+    animateLoader(30, text||'Loading…');
+  });
+}
+
+// ─── SAFE HISTORY HELPERS ─────────────────────────────────────────
+// history.pushState / replaceState throw a SecurityError when the page
+// runs inside an about:srcdoc iframe (e.g. Claude preview, certain
+// embedding contexts). Wrap every call so the router keeps working.
+function safePushState(state, title, url){
+  try{ window.history.pushState(state, title, url); }catch(e){}
+}
+function safeReplaceState(state, title, url){
+  try{ window.history.replaceState(state, title, url); }catch(e){}
+}
+
+// ─── AUTH CHECK ───────────────────────────────────────────────────
+function isLoggedIn(){
+  var u = localStorage.getItem('qc_logged_user');
+  var p = localStorage.getItem('qc_sub_plan');
+  return !!(u && p);
+}
+
+// ─── PATH RESOLVER ────────────────────────────────────────────────
+function resolvePath(){
+  var path = window.location.pathname.replace(/\/+$/, '') || '/';
+  // Support ?store=xxx query for storefront
+  var params = new URLSearchParams(window.location.search);
+  if(INITIAL_STORE) return '/store';
+  if(CUSTOM_STORE && MARKETING.indexOf(path) > -1) return '/store';
+  // Support legacy direct .html loads
+  if(path.endsWith('.html')){
+    var base = path.split('/').pop().replace('.html','');
+    var reverseMap = {'landing':'/','admin':'/dashboard','pos':'/pos','store':'/store','index':'/store'};
+    path = reverseMap[base] || '/';
+  }
+  return path || '/';
+}
+
+// ─── NAVIGATE ────────────────────────────────────────────────────
+function navigate(path, pushState){
+  // Normalize
+  if(!path) path = '/';
+  if(!path.startsWith('/')) path = '/' + path;
+  // Strip trailing slash unless root
+  if(path !== '/' && path.endsWith('/')) path = path.slice(0,-1);
+  if(CUSTOM_STORE && MARKETING.indexOf(path) > -1) path = '/store';
+  // Auth guard
+  if(PROTECTED.indexOf(path) > -1 && !isLoggedIn()){
+    if(pushState !== false) safeReplaceState({path:'/'}, '', '/');
+    loadPage('/', 'landing.html', 'login');
+    return;
+  }
+  // Page editor is owner-only — staff are bounced back to the dashboard
+  if((path==='/page-editor'||path==='/editor'||path==='/store-editor'||path==='/store-builder'||path==='/builder') && localStorage.getItem('qc_is_staff')==='1'){
+    path='/dashboard';
+  }
+  var file = ROUTES[path] || 'landing.html';
+  // An owner's store (anything but the platform's own 'admin' store) uses the dedicated storefront
+  if(file==='store.html') file='shop.html';   /* every store (including the platform owner's) uses the new React storefront */
+  if(pushState !== false){
+    safePushState({path:path}, document.title, urlFor(path));
+  }
+  // Determine intent for landing page (login vs register tab)
+  var intent = null;
+  if(path === '/login') intent = 'login';
+  if(path === '/register' || path === '/signup' || path === '/trial') intent = 'register';
+  loadPage(path, file, intent);
+}
+
+function loadPage(path, file, intent){
+  var loadingTexts = {
+    'landing.html'  : 'Loading homepage…',
+    'admin.html'    : 'Opening dashboard…',
+    'pos.html'      : 'Starting POS terminal…',
+    'store.html'    : 'Loading storefront…',
+    'shop.html'     : 'Opening store…',
+    'page-editor.html': 'Opening store editor…',
+    'store-builder.html': 'Opening Store Builder…',
+    'reset-password.html': 'Securing your account…',
+  };
+  showLoader(loadingTexts[file] || 'Loading…');
+  animateLoader(60);
+  var sp = activeStore();
+  if(!sp && file === 'shop.html') sp = 'admin';   /* bare /store = the platform owner's own store */
+  var extra = (sp && (file === 'store.html' || file === 'shop.html')) ? 'store=' + encodeURIComponent(sp) + '&' : '';
+  if(INITIAL_PAY && (file === 'store.html' || file === 'shop.html')){ extra += 'qc_pay=' + encodeURIComponent(INITIAL_PAY) + '&'; INITIAL_PAY = ''; }
+  if(file === 'reset-password.html' && INITIAL_RESET){ extra += INITIAL_RESET; }
+  frame.src = file + '?' + extra + new Date().getTime();
+  frame.onload = function(){
+    frame.style.animation='none'; void frame.offsetWidth; frame.style.animation='';
+    animateLoader(90, 'Almost there…');
+    // Pass intent to loaded page
+    setTimeout(function(){
+      try{
+        if(intent === 'login')    frame.contentWindow.postMessage({action:'openLogin'}, '*');
+        if(intent === 'register') frame.contentWindow.postMessage({action:'openRegister'}, '*');
+      }catch(e){}
+      hideLoader();
+    }, 150);
+  };
+  frame.onerror = function(){
+    hideLoader();
+    document.getElementById('err-state').classList.add('show');
+    document.getElementById('err-msg').textContent = 'Could not load ' + file + '. Make sure all files are uploaded.';
+  };
+}
+
+// ─── LISTEN TO CHILD FRAMES ───────────────────────────────────────
+window.addEventListener('message', function(e){
+  if(!e.data) return;
+  if(e.data.navigate)  navigate(e.data.navigate);
+  if(e.data.title)     document.title = e.data.title + ' — QuickCart';
+  if(e.data.action === 'showForgot'){
+    // Forward to landing
+    try{ frame.contentWindow.postMessage({action:'showForgot'}, '*'); }catch(err){}
+  }
+});
+
+// ─── BROWSER BACK/FORWARD ────────────────────────────────────────
+window.addEventListener('popstate', function(e){
+  var path = (e.state && e.state.path) ? e.state.path : resolvePath();
+  navigate(path, false);
+});
+
+// ─── EXPOSE GLOBAL qcNavigate (used by child frames) ─────────────
+window.qcNavigate = navigate;
+
+// ─── HANDLE DIRECT URL ACCESS ────────────────────────────────────
+// e.g. user visits quickcart.ng/dashboard directly
+window.addEventListener('DOMContentLoaded', function(){
+  lookupCustomDomain().then(function(owner){
+    CUSTOM_STORE = owner;
+    var path = resolvePath();
+    // Replace initial state so back button works
+    safeReplaceState({path: path}, '', urlFor(path));
+    navigate(path, false);
+  });
+});
+
+// ─── RESET LINKS ──────────────────────────────────────────────────
+// Emails link to /reset-password?token=…&email=… (served by reset-password.html).
+// Old-style ?reset_token= links are forwarded to the same page.
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  if(p.get('reset_token') && window.location.pathname.replace(/\/+$/,'') !== '/reset-password'){
+    window.addEventListener('DOMContentLoaded', function(){ navigate('/reset-password', false); });
+  }
+})();
+</script>
+
+</body>
+</html>

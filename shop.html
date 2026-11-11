@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Store</title>
+<meta name="theme-color" content="#14121a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/shop.css">
+<script src="qc-db.js"></script>
+<script>
+/* qc-live.js asks for the store's database namespace — resolve it once from ?store=<owner> */
+(function(){
+  var o=(new URLSearchParams(location.search).get('store')||localStorage.getItem('qc_store_owner')||'').trim(), ns=null;
+  window.getStoreNS=function(){ if(ns===null) ns=QCDB.baseFor(o); return ns; };
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/shop-brand.css">
+</head>
+<body>
+<div id="root"></div>
+<noscript>This store needs JavaScript to run.</noscript>
+<script src="assets/shop.js"></script>
+<script src="qc-live.js"></script>
+</body>
+</html>

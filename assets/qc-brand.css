@@ -1,0 +1,75 @@
+/* QuickCart brand layer — orange + navy, trendy type, interactive icons, flow.
+   Loaded LAST on every page. Visual only; no behaviour is touched. */
+:root{
+  --qc-orange:#ff5a1f;--qc-orange-2:#ff8a3d;--qc-orange-soft:#fff1ea;--qc-orange-glow:rgba(255,90,31,.38);
+  --qc-navy:#0a1f44;--qc-navy-2:#14306b;--qc-navy-3:#1d3a75;--qc-navy-deep:#061433;--qc-mist:#f6f8fd;--qc-line:#e3e9f5;
+  --qc-ease:cubic-bezier(.34,1.56,.64,1);--qc-ease-out:cubic-bezier(.16,1,.3,1);
+  --font:'Plus Jakarta Sans','Geist',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --display:'Bricolage Grotesque','Plus Jakarta Sans',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --orange:#ff5a1f;--gold:#ffb020;--accent2:#14306b;--ac:#ff5a1f;--ac2:#ff8a3d;--blue:#ff5a1f;
+}
+body,button,input,select,textarea{font-family:var(--font)!important}
+h1,h2,h3,h4,.logo,.tb-logo,.cart-hd h3,.tr.grand,.display,[class*="hero"] h1{font-family:var(--display)!important;letter-spacing:-.035em}
+code,pre,kbd,.mono,.pc-price,.ci-q,.ci-pr,[style*="monospace"]{font-family:var(--mono)!important}
+::selection{background:#ffe1d3;color:var(--qc-navy)}
+:focus-visible{outline:2px solid var(--qc-orange)!important;outline-offset:2px}
+a{color:var(--qc-orange)}
+html{scroll-behavior:smooth}
+body{animation:qc-fade .45s var(--qc-ease-out) both}
+@keyframes qc-fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* ───────── interactive icons ───────── */
+.qci{transition:transform .4s var(--qc-ease),filter .25s;transform-origin:50% 55%;will-change:transform}
+:is(button,a,[onclick],[role=button],label,summary,.tb-btn,.pm,.cp,.nav-item,.sb-item):hover .qci{transform:translateY(-1px) scale(1.2) rotate(-7deg);filter:drop-shadow(0 3px 5px var(--qc-orange-glow))}
+:is(button,a,[onclick],[role=button]):active .qci{transform:scale(.86);transition-duration:.1s}
+:is(button,a,[onclick],[role=button]):hover .qci[data-n=cart]{animation:qi-cart .7s var(--qc-ease)}
+:is(button,a,[onclick],[role=button]):hover .qci[data-n=settings]{animation:qi-spin .9s var(--qc-ease-out)}
+:is(button,a,[onclick],[role=button]):hover .qci[data-n=refresh]{animation:qi-spin 1s var(--qc-ease-out)}
+:is(button,a,[onclick],[role=button]):hover .qci[data-n=clock]{animation:qi-spin 1.2s var(--qc-ease-out)}
+:is(button,a,[onclick],[role=button]):hover .qci[data-n=bell]{animation:qi-ring .8s ease-in-out;transform-origin:50% 8%}
+:is(button,a,[onclick],[role=button]):hover .qci[data-n=trash]{animation:qi-shake .5s ease-in-out}
+:is(button,a,[onclick],[role=button]):hover .qci[data-n=heart]{animation:qi-beat .7s ease-in-out}
+:is(button,a,[onclick],[role=button]):hover .qci[data-n=gift]{animation:qi-shake .6s ease-in-out}
+:is(button,a,[onclick],[role=button]):hover :is(.qci[data-n=zap],.qci[data-n=flame],.qci[data-n=rocket]){animation:qi-lift .7s var(--qc-ease)}
+:is(button,a,[onclick],[role=button]):hover :is(.qci[data-n=sparkles],.qci[data-n=star],.qci[data-n=gem]){animation:qi-twinkle .8s ease-in-out}
+:is(button,a,[onclick],[role=button]):hover .qci[data-n=plus]{animation:qi-quarter .5s var(--qc-ease)}
+:is(button,a,[onclick],[role=button]):hover .qci[data-n=arrow-right]{animation:qi-nudge-r .6s var(--qc-ease)}
+:is(button,a,[onclick],[role=button]):hover .qci[data-n=arrow-left]{animation:qi-nudge-l .6s var(--qc-ease)}
+:is(button,a,[onclick],[role=button]):hover .qci[data-n=download]{animation:qi-nudge-d .6s var(--qc-ease)}
+:is(button,a,[onclick],[role=button]):hover .qci[data-n=upload]{animation:qi-lift .6s var(--qc-ease)}
+:is(button,a,[onclick],[role=button]):hover .qci[data-n=truck]{animation:qi-nudge-r .8s var(--qc-ease)}
+:is(button,a,[onclick],[role=button]):hover :is(.qci[data-n=chart],.qci[data-n=trend]){animation:qi-grow .6s var(--qc-ease)}
+:is(button,a,[onclick],[role=button]):hover :is(.qci[data-n=search],.qci[data-n=camera],.qci[data-n=eye]){animation:qi-pop .5s var(--qc-ease)}
+:is(button,a,[onclick],[role=button]):hover :is(.qci[data-n=lock],.qci[data-n=unlock],.qci[data-n=shield]){animation:qi-hop .5s var(--qc-ease)}
+:is(button,a,[onclick],[role=button]):hover :is(.qci[data-n=mail],.qci[data-n=message],.qci[data-n=phone]){animation:qi-ring .6s ease-in-out;transform-origin:50% 50%}
+@keyframes qi-cart{0%{transform:translateX(0)}30%{transform:translateX(-4px) rotate(-8deg)}60%{transform:translateX(5px) rotate(6deg)}100%{transform:translateX(0)}}
+@keyframes qi-spin{to{transform:rotate(360deg)}}
+@keyframes qi-ring{0%,100%{transform:rotate(0)}20%{transform:rotate(16deg)}40%{transform:rotate(-14deg)}60%{transform:rotate(9deg)}80%{transform:rotate(-6deg)}}
+@keyframes qi-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px) rotate(-6deg)}75%{transform:translateX(3px) rotate(6deg)}}
+@keyframes qi-beat{0%,100%{transform:scale(1)}30%{transform:scale(1.35)}60%{transform:scale(1.1)}}
+@keyframes qi-lift{0%{transform:translateY(0)}40%{transform:translateY(-5px) scale(1.2)}100%{transform:translateY(0)}}
+@keyframes qi-twinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.35) rotate(25deg)}}
+@keyframes qi-quarter{to{transform:rotate(90deg) scale(1.15)}}
+@keyframes qi-nudge-r{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+@keyframes qi-nudge-l{0%,100%{transform:translateX(0)}50%{transform:translateX(-5px)}}
+@keyframes qi-nudge-d{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+@keyframes qi-grow{0%{transform:scaleY(.6)}60%{transform:scaleY(1.25)}100%{transform:scaleY(1)}}
+@keyframes qi-pop{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1.15)}}
+@keyframes qi-hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-4px)}}
+
+/* ───────── buttons, ripple, lift ───────── */
+.qc-rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);transform:scale(0);animation:qc-rip .6s var(--qc-ease-out) forwards;pointer-events:none}
+@keyframes qc-rip{to{transform:scale(1);opacity:0}}
+.qc-ripple-host{position:relative;overflow:hidden}
+.qc-mag{transition:transform .25s var(--qc-ease-out)!important}
+
+/* ───────── top progress bar (page flow) ───────── */
+#qc-flow{position:fixed;left:0;top:0;height:3px;width:0;z-index:99999;background:linear-gradient(90deg,var(--qc-orange),var(--qc-orange-2),#ffd27a);box-shadow:0 0 12px var(--qc-orange-glow);transition:width .35s var(--qc-ease-out),opacity .3s;pointer-events:none}
+
+/* shared toast polish */
+.pos-toast,.toast{border-radius:14px!important;box-shadow:0 12px 36px rgba(10,31,68,.28)!important}
+/* scrollbars */
+*{scrollbar-width:thin;scrollbar-color:#c5d0ea transparent}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#c5d0ea;border-radius:8px}::-webkit-scrollbar-thumb:hover{background:var(--qc-orange)}
